@@ -74,7 +74,7 @@ def get_core_user(users_activity_filtered, tweets_filtered): #, old_users, new_u
         activity_list = activity_list.reset_index(drop=True)
         list_dates = activity_list["created_at"].tolist()
         # TO DO: tune this
-        if (list_dates[-1] - list_dates[0]).days < 90:  # user active for less than 3 months => non core
+        if (list_dates[-1] - list_dates[0]).days < 50:  # user active for less than 3 months => non core
             non_core_users.append(user_id)
             continue
         i = 0
@@ -87,16 +87,16 @@ def get_core_user(users_activity_filtered, tweets_filtered): #, old_users, new_u
                 core_period = max((list_dates[i] - list_dates[index_core_period]).days, core_period)
                 index_core_period = i + 1
             i += 1
-        if (not check) or (check and core_period >= 90):
+        if (not check) or (check and core_period >= 50):
             core_users.append(user_id)
         else:
             non_core_users.append(user_id)
     return core_users, non_core_users
 
 
-if __name__ == "main":
+if __name__ == '__main__':
     dateparse = lambda x: pd.to_datetime(x, format="%Y-%m-%d %H:%M:%S%z")  # pd.datetime.strptime
-    tweets = pd.read_csv("path/to/tweets_file",
+    tweets = pd.read_csv("../data/sample_tweets.csv", #path/to/tweets_file
                          # nrows = 400000,
                          usecols=["tweet_id", "user_id", "created_at"],
                          parse_dates=['created_at'],
@@ -104,9 +104,18 @@ if __name__ == "main":
                                      "tweet_id": str},
                          date_parser=dateparse,
                          lineterminator='\n')
-    activity = pd.read_csv("path/to/activity_file/",
+    activity = pd.read_csv("../data/users_activity.csv", #path/to/activity_file/
                            converters={"user_id": str})
     users_activity_filtered = activity[activity["nbr_tweets_in_dataset"] >= 20].reset_index()[
         "user_id"].unique().tolist()  # TO DO: tune this
     tweets_filtered = tweets[tweets["user_id"].isin(users_activity_filtered)]
-    get_core_user(users_activity_filtered, tweets_filtered)
+
+    users_activity_filtered = tweets_filtered["user_id"].unique().tolist()
+
+    core_users, non_core_users = get_core_user(users_activity_filtered, tweets_filtered)
+
+    df_core_users = pd.DataFrame(core_users, columns=["user_id"])
+    df_non_core_users = pd.DataFrame(non_core_users, columns=["user_id"])
+
+    df_core_users.to_csv("../data/core_users.csv", index=False)
+    df_non_core_users.to_csv("../data/non_core_users.csv", index=False)
