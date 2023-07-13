@@ -1,0 +1,30 @@
+# General
+pandas
+numpy
+matplotlib
+tqdm
+
+
+# Text Analysis
+#sentita
+feel_it
+detoxify
+
+
+# Cluster Analysis
+scikit-learn
+
+
+# Cluster Characterization
+scipy
+nltk
+spacy
+urlexpander
+bertopic
+umap
+
+
+# Data Visualization
+plotly
+seaborn
+wordcloud
