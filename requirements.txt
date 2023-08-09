@@ -13,6 +13,7 @@ detoxify
 
 # Cluster Analysis
 scikit-learn
+hdbscan
 
 
 # Cluster Characterization
