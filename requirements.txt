@@ -19,6 +19,7 @@ shap
 
 # Cluster Characterization
 scipy
+statsmodels
 nltk
 spacy
 urlexpander
